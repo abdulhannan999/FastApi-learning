@@ -1,104 +1,70 @@
-# Backend Development Concepts
+# Fastapi and Backend Development Notes
 
-This README provides an overview of backend development concepts, with a focus on RESTful APIs, as outlined in my notes.
+## Basics
 
-## Core Backend Concepts
+### What is an API?
 
-* **Programming Languages:**
-    * [List the programming languages mentioned in your notes, e.g., Python, JavaScript, Java]
-* **Computer Languages:**
-    * Designed to give instructions to computers.
-    * Work with data and state to perform tasks.
-    * Built with strict syntax and semantic rules.
-    * These are the basis of high-level programming languages.
+* Application Programming Interface
+* Allows different software systems to communicate with each other.
+* Defines the methods and data formats that applications can use to request and exchange information.
 
-## REST API Fundamentals
+### REST API
 
-* **REST API:** (Representational State Transfer Application Programming Interface)
-    * A common architectural style for building web services.
-    * Relies on stateless communication.
-    * Typically uses HTTP methods for operations.
-    * Often transfers data in JSON format.
+* Representational State Transfer
+* An architectural style for building networked applications.
+* Key principles:
+    1.  Stateless: Each request from a client to a server must contain all the information needed to understand the request. The server does not store any client context between requests.
+    2.  Client-Server: A separation of concerns between the client (user interface) and the server (data storage).
+    3.  Cacheable: Responses should be cacheable to improve performance.
+    4.  Layered System: The architecture can be composed of multiple layers, and a client cannot ordinarily tell whether it is connected directly to the end server or to an intermediary.
+    5.  Uniform Interface: This is the core of REST and includes:
+        * Identification of resources (URIS)
+        * Manipulation of resources through representations (e.g., JSON, XML)
+        * Self-descriptive messages (e.g., using media types)
+        * Hypermedia as the engine of application state (HATEOAS)
 
-* **Key Components:**
-    * **Resources:** Represent entities or objects (e.g., users, products).
-    * **HTTP Methods:** Define actions to be performed on resources:
-        * `GET`: Retrieve data.
-        * `POST`: Create new data.
-        * `PUT`: Update existing data.
-        * `DELETE`: Remove data.
-    * **Statelessness:** Each request from the client to the server contains all the information needed to understand the request. The server does not store any client context between requests.
-    * **JSON:** (JavaScript Object Notation) A lightweight data-interchange format.
+### API Endpoints
 
-* **Logic & Flow:**
-    ```
-    User Centric Data --> Modules (functions, methods, processes, manipulation) --> Save in Database --> Logic (if/else/switch) --> REST API (Variables, functions, endpoints)
-    ```
+* Specific URLS that represent resources or actions in the API.
+* Clients interact with these endpoints using HTTP methods (GET, POST, PUT, DELETE, etc.).
 
-## HTTP (Hypertext Transfer Protocol)
+## FastAPI
 
-* **Foundation of Data Communication on the Web.**
-* **Request-Response Model:**
-    * **Client (e.g., Browser, Application):** Sends HTTP requests to the server.
-    * **Server:** Receives and processes requests, then sends back HTTP responses.
+* A modern, fast (high-performance) web framework for building AAPISwith Python 3.8+ based on standard Python type hints.
 
-* **HTTP Request Structure:**
-    * **Method:** (e.g., GET, POST, PUT, DELETE) Indicates the desired action.
-    * **Path/URI (Uniform Resource Identifier):** Identifies the resource on the server.
-    * **Headers:** Provide additional information about the request (e.g., content type, authorization).
-    * **Body (Optional):** Contains data to be sent to the server (e.g., for POST or PUT requests).
+### Key Features
 
-* **HTTP Response Structure:**
-    * **Status Code:** Indicates the outcome of the request (e.g., 200 OK, 404 Not Found, 500 Internal Server Error).
-    * **Headers:** Provide additional information about the response (e.g., content type).
-    * **Body (Optional):** Contains the requested data or error message.
+* **Based on open standards:** Openapi (formerly Swagger) and JSON Schema.
+* **Automatic data validation:** Using Pydantic.
+* **Serialisation:** Automatic conversion of Python data structures to JSON.
+* **Documentation:** Automatic interactive API documentation (Swagger UI and ReDoc).
+* **Dependency Injection:** Built-in support for managing dependencies.
+* **Security:** Easy integration with security schemes like OAuth2.
 
-* **Common HTTP Status Codes:**
-    * `200 OK` - The request was successful.
-    * `201 Created` - The request has been fulfilled and resulted in a new resource being created.
-    * `400 Bad Request` - The server could not understand the request due to invalid syntax.
-    * `401 Unauthorized` - The client must authenticate itself to get the requested response.
-    * `403 Forbidden` - The client does not have access rights to the content.
-    * `404 Not Found` - The server can not find the requested resource.
-    * `500 Internal Server Error` - The server encountered an unexpected condition that prevented it from fulfilling the request.
+### Core Concepts
 
-## API Methodologies
+* **Path Operations:** Define the HTTP methods (GET, POST, PUT, DELETE, etc.) and paths (URLS) for your API endpoints.
+* **Path Parameters:** Variables in the URL path (e.g., `/items/{item_id}`).
+* **Query Parameters:** Parameters passed in the URL after a question mark (e.g., `/items/?skip=0&limit=10`).
+* **Request Body:** Data sent by the client in the body of the request (often in JSON format). Defined using Pydantic models.
+* **Responses:** Data returned by the API to the client. Can also be defined using Pydantic models.
+* **Pydantic:** A data validation and settings management library using Python type hints. Used by FastAPI for request and response data validation and serialization.
+* **Dependencies:** Functions that can be run before your path operation functions, used for authentication, authorization, data validation, etc.
+* **Middleware:** Functions that process every request before it reaches any specific path operation and every response before leaving.
 
-* **REST (Representational State Transfer):** (Covered above)
-* **SOAP (Simple Object Access Protocol):**
-    * An older, more complex protocol for web services.
-    * Relies on XML for message format.
-* **GraphQL:**
-    * A query language for your API and a server-side runtime for executing those queries.
-    * Allows clients to request specific data they need, avoiding over-fetching.
+### Basic Structure
 
-## API Endpoints
+```python
+from fastapi import FastAPI
 
-* **Definition:** Specific URLs (Uniform Resource Locators) that represent the resources exposed by the API.
-* **Structure:** Typically follows a logical and hierarchical structure (e.g., `/users`, `/products/{id}`, `/orders`).
+app = FastAPI()
 
-## API Documentation
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
 
-* **Importance:** Crucial for developers to understand how to use the API.
-* **Common Methods:**
-    * **Manual Documentation:** Writing guides and specifications.
-    * **Swagger/OpenAPI:** A widely adopted specification for describing REST APIs. Allows for automated generation of documentation and client libraries.
+@app.post("/items/")
+async def create_item(item: Item):
+    return item
 
-## API Authentication and Authorization
-
-* **Authentication:** Verifying the identity of the client making the request.
-    * **Common Methods:**
-        * HTTP Basic Auth: Simple authentication scheme using username and password.
-        * API Keys: Unique keys assigned to clients for identification.
-        * OAuth 2.0: An open standard for authorization, commonly used for third-party access.
-        * JWT (JSON Web Tokens): A compact, URL-safe means of representing claims to be transferred between two parties.
-* **Authorization:** Determining what actions an authenticated client is allowed to perform.
-
-## Data Persistence
-
-* **Databases:** Used to store and retrieve application data.
-    * **Types:**
-        * Relational Databases (e.g., MySQL, PostgreSQL): Organize data into tables with defined relationships.
-        * NoSQL Databases (e.g., MongoDB, Cassandra): Provide flexible schemas for various data models.
-
-## Backend Architecture
+# ... other path operations and code ...
